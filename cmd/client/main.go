@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	room := flag.String("r", "", "room name to join (required)")
+	room := flag.String("r", "sebuung", "room name to join (required)")
 	nick := flag.String("n", "", "nickname to use (required)")
 	server := flag.String("s", "chat.sebuung.com:9000", "chat server address (host:port)")
 	flag.Parse()
