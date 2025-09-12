@@ -148,6 +148,11 @@ func handleConn(hub *Hub, conn net.Conn) {
 		if strings.HasPrefix(line, "/quit") {
 			break
 		}
+		if strings.HasPrefix(line, "/list") {
+			users := userList(room)
+			client.outbound <- fmt.Sprintf("*** users in %s: %s", room.name, strings.Join(users, ", "))
+			continue
+		}
 		ts := time.Now().Format("15:04:05")
 		room.broadcast(fmt.Sprintf("[%s] %s: %s", ts, client.nick, line))
 	}
@@ -155,4 +160,14 @@ func handleConn(hub *Hub, conn net.Conn) {
 	room.remove(client)
 	close(client.outbound)
 	_ = conn.Close()
+}
+
+func userList(r *Room) []string {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	users := make([]string, 0, len(r.clients))
+	for c := range r.clients {
+		users = append(users, c.nick)
+	}
+	return users
 }
